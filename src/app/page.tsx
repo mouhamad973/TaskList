@@ -4,6 +4,7 @@ import Header from "./components/Header";
 import AddTask from "./components/AddTask";
 import { ITasks } from "./types";
 import NoTask from "./components/NoTask";
+import Task from "./components/Task";
 
 export default function Home() {
   const [task, setTask] = useState("");
@@ -48,8 +49,36 @@ export default function Home() {
     fetchTasks();
   }, []);
 
-  const handleDeleteTask = async () => {};
-  const handleCompletedTask = async () => {};
+  const handleDeleteTask = async (id: string) => {
+    try {
+      const response = await fetch(`/api/task/delete/${id}`, {
+        method: "DELETE",
+      });
+      if (response.ok) {
+        setAllTasks((prevTasks) =>
+          prevTasks.filter((task: ITasks) => task._id !== id)
+        );
+      } else {
+        console.log("Error");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const handleCompletedTask = async (id: string) => {
+    try {
+      const response = await fetch(`/api/task/complete/${id}`, {
+        method: "PATCH",
+      });
+      if (response.ok) {
+        await fetchTasks();
+      } else {
+        console.log("Error completing task");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <>
       <Header />
